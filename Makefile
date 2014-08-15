@@ -1,4 +1,4 @@
-TARGETS = cond
+TARGETS = cond mail-box.o
 CFLAGS += -pthread
 
 all: $(TARGETS)
