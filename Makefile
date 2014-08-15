@@ -1,4 +1,5 @@
-TARGETS =
+TARGETS = cond
+CFLAGS += -pthread
 
 all: $(TARGETS)
 
