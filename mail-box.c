@@ -52,6 +52,7 @@ int mail_box_destroy (struct mail_box *mb)
 		free (p);
 	}
 
+	free (mb);
 	return 0;
 }
 
