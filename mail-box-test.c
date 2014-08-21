@@ -23,9 +23,10 @@ struct message {
 
 static struct mail_box *mb;
 
-static void do_fake_work (void)
+static void do_fake_work (double base)
 {
-	usleep (random () * (0.5e6 / RAND_MAX) + 0.3e6);
+	base *= 1e6;
+	usleep (random () * (base / RAND_MAX) + base);
 }
 
 static void *worker (void *ctx)
@@ -42,7 +43,7 @@ static void *worker (void *ctx)
 		if (mail_box_put (mb, m) != 0)
 			break;
 
-		do_fake_work ();
+		do_fake_work (0.03);
 	}
 
 	if (errno != 0)
@@ -66,6 +67,8 @@ static void *watcher (void *ctx)
 
 		printf ("message from %td, id = %d\n", m->src, m->id);
 		free (m);
+
+		do_fake_work (0.07);
 	}
 
 	if (errno != 0)
@@ -77,7 +80,7 @@ static void *watcher (void *ctx)
 int main (int argc, char *argv[])
 {
 	pthread_attr_t attr;
-	pthread_t threads[3];
+	pthread_t threads[4];
 	int i;
 	struct message *m;
 
@@ -94,6 +97,7 @@ int main (int argc, char *argv[])
 	pthread_create (&threads[0], &attr, watcher, ctx (1));
 	pthread_create (&threads[1], &attr, worker,  ctx (2));
 	pthread_create (&threads[2], &attr, worker,  ctx (3));
+	pthread_create (&threads[3], &attr, worker,  ctx (4));
 
 	pthread_attr_destroy (&attr);
 
