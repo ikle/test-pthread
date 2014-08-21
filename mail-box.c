@@ -55,6 +55,13 @@ int mail_box_destroy (struct mail_box *mb)
 	return 0;
 }
 
+void message_list_add (struct message **p, struct message *m)
+{
+	for (; *p != NULL; p = &(*p)->next) {}
+
+	*p = m;
+}
+
 int mail_box_put (struct mail_box *mb, void *data)
 {
 	struct message *message;
@@ -65,9 +72,9 @@ int mail_box_put (struct mail_box *mb, void *data)
 	if ((errno = pthread_mutex_lock (&mb->lock)) != 0)
 		goto no_lock;
 
-	message->next = mb->list;
+	message->next = NULL;
 	message->data = data;
-	mb->list = message;
+	message_list_add (&mb->list, message);
 
 	pthread_cond_signal (&mb->cond);
 
