@@ -1,4 +1,4 @@
-TARGETS = cond mail-box-test
+TARGETS = cond mail-box-test gcc-atomic
 CFLAGS += -pthread
 
 all: $(TARGETS)

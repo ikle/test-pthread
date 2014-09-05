@@ -2,3 +2,4 @@
 *.swp
 cond
 mail-box-test
+gcc-atomic
