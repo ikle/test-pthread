@@ -15,7 +15,8 @@
 #if GCC_VERSION < 40100
 #error At least GNU C compiler version 4.1 required
 #elif GCC_VERSION >= 40700
-#define atomic_inc(c)	__atomic_add_fetch (&(c), 1, __ATOMIC_SEQ_CST)
+/* Atomic increment need not be ordered */
+#define atomic_inc(c)	__atomic_add_fetch (&(c), 1, __ATOMIC_RELAXED)
 #else
 #define atomic_inc(c)	__sync_add_and_fetch (&(c), 1);
 #endif
@@ -57,6 +58,8 @@ int main (int argc, char *argv[])
 	/* Wait for all worker threads to complete */
 	for (i = 0; i < ARRAY_SIZE (threads); ++i)
 		pthread_join (threads[i], NULL);
+
+	/* NOTE: full memory barrier implied by pthread_join */
 
 	if (gettimeofday (&stop, NULL) != 0)
 		goto fatal;
